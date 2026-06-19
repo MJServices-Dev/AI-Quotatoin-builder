@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotation Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- User bar -->
+    {% if user %}
+    <div class="user-bar">
+        <div class="user-pill-wrapper">
+            <div class="user-pill">
+                <i data-lucide="user" class="icon-sm"></i>
+                {{ user.name }}
+            </div>
+            <div class="user-tooltip">
+                <div class="tooltip-name">{{ user.name }}</div>
+                <div class="tooltip-company">{{ user.company }}</div>
+                <div class="tooltip-row">
+                    <span class="tooltip-icon"><i data-lucide="mail" class="icon-sm"></i></span>
+                    <span>{{ user.email or '—' }}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-icon"><i data-lucide="phone" class="icon-sm"></i></span>
+                    <span>{{ user.phone or '—' }}</span>
+                </div>
+                <div class="tooltip-actions">
+                    <a href="/logout" class="tooltip-logout">
+                        <i data-lucide="log-out" class="icon-sm"></i>
+                        Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>AI Quotation Builder</h1>
+        </div>
+
+        <!-- Main Card -->
+        <div class="main-card">
+            <!-- Alert Box -->
+            <div id="alertBox" class="alert"></div>
+
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <h3>
+                    <i data-lucide="upload" class="icon-md"></i>
+                    Upload Requirement Document
+                </h3>
+                <div id="uploadArea" class="upload-area">
+                    <div class="upload-icon"><i data-lucide="upload-cloud" class="icon-lg"></i></div>
+                    <div class="upload-text">Click to upload or drag and drop</div>
+                    <div class="upload-hint">Supports Word (.docx) and PDF files</div>
+                </div>
+                <input type="file" id="fileInput" accept=".pdf,.docx,.doc">
+
+                <div id="fileInfo" class="file-info">
+                    <div class="file-icon"><i data-lucide="file-text" class="icon-lg"></i></div>
+                    <div class="file-details">
+                        <div id="fileName" class="file-name">document.pdf</div>
+                        <div class="file-size">Ready to process</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Template Selection -->
+            <div class="template-section">
+                <h3>
+                    <i data-lucide="layout-template" class="icon-md"></i>
+                    Select Quotation Template
+                </h3>
+                <div class="template-toggle">
+                    <div class="template-option active" data-template="type1">
+                        <h4>Type 1: Detailed Itemized</h4>
+                        <p>Comprehensive breakdown with detailed pricing table, timeline, and terms.</p>
+                    </div>
+                    <div class="template-option" data-template="type2">
+                        <h4>Type 2: Executive Summary</h4>
+                        <p>Professional executive-style with consolidated pricing and key highlights.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button id="generateBtn" class="btn btn-primary" disabled>
+                    <i data-lucide="sparkles" class="icon-sm"></i>
+                    Generate Quotation
+                </button>
+            </div>
+
+            <!-- Progress Section -->
+            <div id="progressSection" class="progress-section">
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <div id="progressText" class="progress-text">Processing...</div>
+            </div>
+
+            <!-- Preview Section -->
+            <div id="previewSection" class="preview-section">
+                <h3>
+                    <i data-lucide="eye" class="icon-md"></i>
+                    Quotation Preview
+                </h3>
+                <div id="previewContent" class="preview-content">
+                    <!-- Preview content will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Download Section -->
+            <div id="downloadSection" class="download-section">
+                <h3>
+                    <i data-lucide="check-circle" class="icon-md"></i>
+                    Quotation Generated Successfully!
+                </h3>
+                <p>Download your professional quotation in your preferred format, or send it directly to an email inbox.</p>
+                <div class="download-buttons">
+                    <button id="downloadPdf" class="btn btn-success">
+                        <i data-lucide="file-text" class="icon-sm"></i>
+                        Download PDF
+                    </button>
+                    <button id="downloadWord" class="btn btn-success">
+                        <i data-lucide="file-pen" class="icon-sm"></i>
+                        Download Word
+                    </button>
+                    <button id="sendEmailPdf" class="btn btn-email">
+                        <i data-lucide="mail" class="icon-sm"></i>
+                        Send PDF via Email
+                    </button>
+                    <button id="sendEmailWord" class="btn btn-email">
+                        <i data-lucide="send" class="icon-sm"></i>
+                        Send Word via Email
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── Chat Entry Card ── -->
+            <div class="chat-entry-section">
+                <div class="chat-divider"><span>or</span></div>
+                <a href="/chat" class="chat-card">
+                    <div class="chat-card-icon">
+                        <i data-lucide="bot" class="icon-lg"></i>
+                    </div>
+                    <div class="chat-card-content">
+                        <div class="chat-card-title">Don't have a document? Chat with AI</div>
+                        <div class="chat-card-desc">
+                            Our AI assistant will guide you through the requirements step by step
+                            and generate the quotation automatically.
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+<!-- ───────────────────────────────────────────────────────────────────────
+     Email Prompt Modal
+     Shown when the user clicks Send Email but has no registered email,
+     or wants to send to a different address.
+─────────────────────────────────────────────────────────────────────────── -->
+<div id="emailModal" class="email-modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="emailModalTitle">
+    <div class="email-modal-card">
+        <div class="email-modal-header">
+            <div class="email-modal-icon"><i data-lucide="mail" class="icon-md"></i></div>
+            <h2 id="emailModalTitle">Send Quotation via Email</h2>
+            <p id="emailModalSubtitle">Enter the email address to which you want to send the quotation.</p>
+        </div>
+        <div class="email-modal-body">
+            <label for="modalEmailInput" class="email-label">Email Address</label>
+            <input type="email" id="modalEmailInput" class="email-input"
+                   placeholder="e.g. client@company.com" autocomplete="email" />
+            <p id="emailModalError" class="email-modal-error" style="display:none;"></p>
+        </div>
+        <div class="email-modal-footer">
+            <button id="emailModalCancel" class="btn btn-ghost">Cancel</button>
+            <button id="emailModalSend" class="btn btn-primary">
+                <i data-lucide="send" class="icon-sm"></i>
+                Send
+            </button>
+        </div>
+    </div>
+</div>
+
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

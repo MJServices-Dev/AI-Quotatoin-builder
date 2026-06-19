@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--bg-body);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 48px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-lg);
+      transition: background var(--transition-normal), border-color var(--transition-normal);
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      background: var(--brand-primary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .title {
+      color: var(--text-primary);
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      background: var(--bg-card-alt);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+    }
+
+    .tab.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    /* Form panel */
+    .panel {
+      display: none;
+    }
+    .panel.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+    
+    .input-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      padding: 12px 14px 12px 40px; /* space for icon */
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      font-family: inherit;
+    }
+
+    input:focus {
+      border-color: var(--brand-primary);
+      box-shadow: var(--shadow-focus);
+    }
+
+    input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .auth-btn {
+      width: 100%;
+      margin-top: 8px;
+      background: var(--brand-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 14px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .auth-btn:hover {
+      background: var(--brand-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .auth-alert {
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid transparent;
+    }
+
+    .auth-alert-error {
+      background: rgba(239, 68, 68, .05);
+      border: 1px solid rgba(239, 68, 68, .2);
+      border-left-color: var(--accent-danger);
+      color: var(--accent-danger);
+    }
+
+    .auth-alert-success {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-left-color: var(--accent-success);
+      color: var(--accent-success);
+    }
+
+    .row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="logo-container">
+        <div class="logo">
+            <i data-lucide="zap" class="icon-lg" style="width:24px;height:24px"></i>
+        </div>
+        <div class="title">Quote</div>
+        <div class="subtitle">Welcome to AI Quotation Builder</div>
+    </div>
+
+    <div class="tabs">
+      <a href="/login" class="tab {% if tab == 'login' %}active{% endif %}">Sign In</a>
+      <a href="/register" class="tab {% if tab == 'register' %}active{% endif %}">Create Account</a>
+    </div>
+
+    {% if error %}
+    <div class="auth-alert auth-alert-error">
+        <i data-lucide="alert-circle" class="icon-md"></i>
+        {{ error }}
+    </div>
+    {% endif %}
+    {% if success %}
+    <div class="auth-alert auth-alert-success">
+        <i data-lucide="check-circle-2" class="icon-md"></i>
+        {{ success }}
+    </div>
+    {% endif %}
+
+    <!-- Login Panel -->
+    <div class="panel {% if tab == 'login' %}active{% endif %}">
+      <form method="POST" action="/login">
+        <div class="form-group">
+            <label>Organization Name</label>
+            <div class="input-wrapper">
+                <i data-lucide="building" class="icon-sm input-icon"></i>
+                <input type="text" name="company" placeholder="e.g. Acme Corp" required autocomplete="organization">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <div class="input-wrapper">
+                <i data-lucide="lock" class="icon-sm input-icon"></i>
+                <input type="password" name="password" placeholder="Enter password" required>
+            </div>
+        </div>
+        <button type="submit" class="auth-btn">
+            Sign In<i data-lucide="arrow-right" class="icon-sm"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- Register Panel -->
+    <div class="panel {% if tab == 'register' %}active{% endif %}">
+      <form method="POST" action="/register">
+        <div class="row2">
+          <div class="form-group">
+            <label>Full Name</label>
+            <div class="input-wrapper">
+                <i data-lucide="user" class="icon-sm input-icon"></i>
+                <input type="text" name="name" placeholder="John Doe" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Organization</label>
+            <div class="input-wrapper">
+                <i data-lucide="building" class="icon-sm input-icon"></i>
+                <input type="text" name="company" placeholder="Acme Corp" required>
+            </div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="form-group">
+            <label>Work Email</label>
+            <div class="input-wrapper">
+                <i data-lucide="mail" class="icon-sm input-icon"></i>
+                <input type="email" name="email" placeholder="john@acme.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <div class="input-wrapper">
+                <i data-lucide="phone" class="icon-sm input-icon"></i>
+                <input type="tel" name="phone" placeholder="+1 (555) 000-0000" required>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <div class="input-wrapper">
+                <i data-lucide="lock" class="icon-sm input-icon"></i>
+                <input type="password" name="password" placeholder="Min 6 characters" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Confirm Password</label>
+            <div class="input-wrapper">
+                <i data-lucide="shield-check" class="icon-sm input-icon"></i>
+                <input type="password" name="confirm" placeholder="Repeat password" required>
+            </div>
+        </div>
+        <button type="submit" class="auth-btn">
+            Create Account <i data-lucide="user-plus" class="icon-sm"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+  <script>
+      lucide.createIcons();
+  </script>
+</body>
+
+</html>

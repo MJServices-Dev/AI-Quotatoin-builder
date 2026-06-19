@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Quotation System – Workflow Diagram</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    padding: 14mm 15mm;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  @page { size: A4 portrait; margin: 0; }
+  @media print {
+    body { padding: 14mm 15mm; }
+  }
+</style>
+</head>
+<body>
+<svg width="180mm" height="268mm" viewBox="0 0 680 1012"
+     xmlns="http://www.w3.org/2000/svg"
+     font-family="Arial, Helvetica, sans-serif">
+
+  <defs>
+    <marker id="arr" markerWidth="9" markerHeight="7"
+            refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#2c3e50"/>
+    </marker>
+  </defs>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  TITLE                                      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="90" y="14" width="500" height="58" rx="5" fill="#1c2b4b"/>
+  <text x="340" y="36" text-anchor="middle"
+        font-size="13.5" font-weight="bold" fill="#ffffff">
+    AI-Driven Smart Quotation Generation System
+  </text>
+  <text x="340" y="58" text-anchor="middle"
+        font-size="11" fill="#a8bfe0">
+    Project Workflow Overview
+  </text>
+
+  <!-- Arrow: Title -> Auth -->
+  <line x1="340" y1="72" x2="340" y2="96"
+        stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arr)"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  AUTH BOX                                   -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="195" y="98" width="290" height="54" rx="5" fill="#2d4373"/>
+  <text x="340" y="120" text-anchor="middle"
+        font-size="12" font-weight="bold" fill="#ffffff">
+    User Access / Registration / Login
+  </text>
+  <text x="340" y="140" text-anchor="middle"
+        font-size="10.5" fill="#a8c6f0">
+    Supabase Auth
+  </text>
+
+  <!-- Auth splits: vertical + horizontal + two drops -->
+  <line x1="340" y1="152" x2="340" y2="170"
+        stroke="#2c3e50" stroke-width="1.6"/>
+  <line x1="148" y1="170" x2="532" y2="170"
+        stroke="#2c3e50" stroke-width="1.6"/>
+  <line x1="148" y1="170" x2="148" y2="186"
+        stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="532" y1="170" x2="532" y2="186"
+        stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  SYSTEM MANAGEMENT GROUP (dashed)           -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="12" y="188" width="272" height="188" rx="5"
+        fill="#f4f6fb" stroke="#8899bb"
+        stroke-dasharray="7,4" stroke-width="1.5"/>
+  <text x="148" y="208" text-anchor="middle"
+        font-size="10" fill="#5a6a8a"
+        font-style="italic" font-weight="bold">
+    System Management
+  </text>
+
+  <!-- Chat History box -->
+  <rect x="26" y="214" width="244" height="66" rx="4"
+        fill="#ffffff" stroke="#3a5fa0" stroke-width="1.5"/>
+  <text x="148" y="234" text-anchor="middle"
+        font-size="11" font-weight="bold" fill="#1c2b4b">
+    Chat History
+  </text>
+  <text x="148" y="251" text-anchor="middle"
+        font-size="10" fill="#4a5568">
+    Supabase Storage
+  </text>
+  <text x="148" y="268" text-anchor="middle"
+        font-size="10" fill="#4a5568">
+    Load / Delete
+  </text>
+
+  <!-- Admin Dashboard box -->
+  <rect x="26" y="298" width="244" height="66" rx="4"
+        fill="#ffffff" stroke="#3a5fa0" stroke-width="1.5"/>
+  <text x="148" y="318" text-anchor="middle"
+        font-size="11" font-weight="bold" fill="#1c2b4b">
+    Admin Dashboard
+  </text>
+  <text x="148" y="335" text-anchor="middle"
+        font-size="10" fill="#4a5568">
+    Manage Users
+  </text>
+  <text x="148" y="352" text-anchor="middle"
+        font-size="10" fill="#4a5568">
+    View Sessions
+  </text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  DATA INGESTION GROUP (dashed)              -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="396" y="188" width="272" height="188" rx="5"
+        fill="#f4f6fb" stroke="#8899bb"
+        stroke-dasharray="7,4" stroke-width="1.5"/>
+  <text x="532" y="208" text-anchor="middle"
+        font-size="10" fill="#5a6a8a"
+        font-style="italic" font-weight="bold">
+    Data Ingestion Paths
+  </text>
+
+  <!-- Document Upload box -->
+  <rect x="410" y="214" width="244" height="66" rx="4"
+        fill="#ffffff" stroke="#2e7d52" stroke-width="1.5"/>
+  <text x="532" y="234" text-anchor="middle"
+        font-size="11" font-weight="bold" fill="#1c2b4b">
+    Document Upload Path
+  </text>
+  <text x="532" y="251" text-anchor="middle"
+        font-size="10" fill="#4a5568">
+    Word / PDF / Excel / Image / OCR
+  </text>
+  <text x="532" y="268" text-anchor="middle"
+        font-size="10" fill="#4a5568">
+    Parse — Extract Requirements
+  </text>
+
+  <!-- AI Chatbot box -->
+  <rect x="410" y="298" width="244" height="66" rx="4"
+        fill="#ffffff" stroke="#2e7d52" stroke-width="1.5"/>
+  <text x="532" y="318" text-anchor="middle"
+        font-size="11" font-weight="bold" fill="#1c2b4b">
+    AI Chatbot Path
+  </text>
+  <text x="532" y="335" text-anchor="middle"
+        font-size="10" fill="#4a5568">
+    Conversational Q&amp;A
+  </text>
+  <text x="532" y="352" text-anchor="middle"
+        font-size="10" fill="#4a5568">
+    Groq LLM — Expand to Requirements
+  </text>
+
+  <!-- Arrow: Data Ingestion -> LLM (route through center) -->
+  <line x1="532" y1="376" x2="532" y2="398"
+        stroke="#2c3e50" stroke-width="1.6"/>
+  <line x1="532" y1="398" x2="340" y2="398"
+        stroke="#2c3e50" stroke-width="1.6"/>
+  <line x1="340" y1="398" x2="340" y2="412"
+        stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  LLM PROCESSING BOX                         -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="166" y="414" width="348" height="76" rx="5" fill="#3b2000"/>
+  <text x="340" y="437" text-anchor="middle"
+        font-size="12" font-weight="bold" fill="#ffffff">
+    LLM Processing Engine
+  </text>
+  <text x="340" y="456" text-anchor="middle"
+        font-size="10.5" fill="#f0c080">
+    Groq API — LLaMA 3.3 70B
+  </text>
+  <text x="340" y="474" text-anchor="middle"
+        font-size="10" fill="#d4b080">
+    Entity Extraction — Structured JSON Output
+  </text>
+
+  <!-- Arrow: LLM -> Quotation -->
+  <line x1="340" y1="490" x2="340" y2="516"
+        stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arr)"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  QUOTATION GENERATION BOX                   -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="110" y="518" width="460" height="88" rx="5" fill="#1e3a5f"/>
+  <text x="340" y="542" text-anchor="middle"
+        font-size="12" font-weight="bold" fill="#ffffff">
+    Quotation Generation
+  </text>
+  <text x="340" y="560" text-anchor="middle"
+        font-size="10.5" fill="#a8c6f0">
+    Template Type 1 / Type 2
+  </text>
+  <text x="340" y="577" text-anchor="middle"
+        font-size="10" fill="#8ab4d8">
+    Dynamic Pricing — Item Breakdown
+  </text>
+  <text x="340" y="594" text-anchor="middle"
+        font-size="10" fill="#8ab4d8">
+    xhtml2pdf (PDF)   |   python-docx (Word)
+  </text>
+
+  <!-- Output Distribution label -->
+  <text x="340" y="630" text-anchor="middle"
+        font-size="9.5" fill="#777" font-style="italic">
+    Output Distribution
+  </text>
+
+  <!-- Quotation splits to 3 -->
+  <line x1="340" y1="606" x2="340" y2="622"
+        stroke="#2c3e50" stroke-width="1.6"/>
+  <line x1="108" y1="622" x2="572" y2="622"
+        stroke="#2c3e50" stroke-width="1.6"/>
+  <line x1="108" y1="622" x2="108" y2="638"
+        stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="340" y1="622" x2="340" y2="638"
+        stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="572" y1="622" x2="572" y2="638"
+        stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  OUTPUT BOXES                               -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- Download PDF -->
+  <rect x="16" y="640" width="184" height="52" rx="4"
+        fill="#ffffff" stroke="#2c3e50" stroke-width="1.5"/>
+  <text x="108" y="663" text-anchor="middle"
+        font-size="11" font-weight="bold" fill="#1c2b4b">
+    Download PDF
+  </text>
+  <text x="108" y="681" text-anchor="middle"
+        font-size="9.5" fill="#5a6a7a">
+    Quotation as PDF File
+  </text>
+
+  <!-- Download Word -->
+  <rect x="248" y="640" width="184" height="52" rx="4"
+        fill="#ffffff" stroke="#2c3e50" stroke-width="1.5"/>
+  <text x="340" y="663" text-anchor="middle"
+        font-size="11" font-weight="bold" fill="#1c2b4b">
+    Download Word
+  </text>
+  <text x="340" y="681" text-anchor="middle"
+        font-size="9.5" fill="#5a6a7a">
+    Quotation as .docx File
+  </text>
+
+  <!-- Send via Email -->
+  <rect x="480" y="640" width="184" height="52" rx="4"
+        fill="#ffffff" stroke="#2c3e50" stroke-width="1.5"/>
+  <text x="572" y="663" text-anchor="middle"
+        font-size="11" font-weight="bold" fill="#1c2b4b">
+    Send via Email
+  </text>
+  <text x="572" y="681" text-anchor="middle"
+        font-size="9.5" fill="#5a6a7a">
+    Deliver to Client
+  </text>
+
+  <!-- Merge arrows to tech stack -->
+  <line x1="108" y1="692" x2="108" y2="712"
+        stroke="#2c3e50" stroke-width="1.5"/>
+  <line x1="340" y1="692" x2="340" y2="712"
+        stroke="#2c3e50" stroke-width="1.5"/>
+  <line x1="572" y1="692" x2="572" y2="712"
+        stroke="#2c3e50" stroke-width="1.5"/>
+  <line x1="108" y1="712" x2="572" y2="712"
+        stroke="#2c3e50" stroke-width="1.5"/>
+  <line x1="340" y1="712" x2="340" y2="726"
+        stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  TECH STACK BAR                             -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="55" y="728" width="570" height="48" rx="5" fill="#1c2b4b"/>
+  <text x="340" y="748" text-anchor="middle"
+        font-size="11" font-weight="bold" fill="#a8bfe0">
+    Technology Stack
+  </text>
+  <text x="340" y="766" text-anchor="middle"
+        font-size="10.5" fill="#d0e0f8">
+    Flask  ·  Gunicorn  ·  Supabase  ·  Groq API  ·  Edge-TTS  ·  Render.com
+  </text>
+
+</svg>
+</body>
+</html>

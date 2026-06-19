@@ -1,0 +1,33 @@
+# ── Core Web Framework ────────────────────────────────────────────────────────
+Flask>=2.3
+gunicorn>=21.2          # production WSGI — multi-worker multi-thread support
+werkzeug>=2.3
+Jinja2>=3.1
+
+# ── AI & Voice Services ───────────────────────────────────────────────────────
+groq
+openai>=1.0
+edge-tts
+
+# ── Database & Auth ───────────────────────────────────────────────────────────
+supabase>=2.0           # thread-safe httpx-based client
+
+# ── Utilities & Config ────────────────────────────────────────────────────────
+python-dotenv
+httpx>=0.24
+
+# ── Document Processing / Generation ─────────────────────────────────────────
+python-docx
+PyPDF2
+xhtml2pdf
+pandas
+openpyxl                # required by pandas for .xlsx support
+easyocr
+opencv-python-headless
+pdf2image
+Pillow
+numpy
+
+# ── NLP (optional — entity extraction) ───────────────────────────────────────
+spacy
+# After install, run: python -m spacy download en_core_web_sm

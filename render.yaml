@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: python-app
+    env: python
+    plan: free
+
+    buildCommand: |
+      apt-get update && apt-get install -y libgl1
+      pip install -r requirements.txt
+
+    # Use gunicorn config file — 4 workers × 4 threads = handles 30 concurrent users
+    startCommand: gunicorn -c gunicorn.conf.py app:app
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.10.13"
+      # FLASK_SECRET_KEY must be the same value across all workers/restarts
+      # Set this in Render dashboard → Environment tab
+      - key: FLASK_SECRET_KEY
+        sync: false
