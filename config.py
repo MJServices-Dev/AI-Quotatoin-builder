@@ -21,7 +21,7 @@ class Config:
     # Limit session cookie lifetime so tokens don't linger forever.
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
-    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = os.getenv('FLASK_ENV') == 'production'
     PERMANENT_SESSION_LIFETIME = 60 * 60 * 8   # 8 hours (seconds)
 
     # ── Database / Supabase ───────────────────────────────────────────────────

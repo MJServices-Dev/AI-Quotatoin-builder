@@ -2004,10 +2004,10 @@
                     </div>
                     <div class="template-row">
                         <div class="tpl-opt active" data-tpl="type1">
-                            <i data-lucide="layout-list" class="icon-sm"></i> Detailed Format
+                            <i data-lucide="layout-list" class="icon-sm"></i> Type 1 - Detailed Format
                         </div>
                         <div class="tpl-opt" data-tpl="type2">
-                            <i data-lucide="layout-dashboard" class="icon-sm"></i> Executive Summary
+                            <i data-lucide="layout-dashboard" class="icon-sm"></i> Type 2 - Executive Summary
                         </div>
                     </div>
                     <button class="gen-btn" id="generateBtn">
@@ -2037,6 +2037,25 @@
                     <div class="email-status" id="emailStatus" style="display:none;">
                         <i data-lucide="info" class="icon-sm"></i>
                         <span id="emailStatusText"></span>
+                    </div>
+
+                    <!-- Feedback Section -->
+                    <div id="feedbackSection" style="display:none; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-md); padding: 16px; margin-top: 20px;">
+                        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; color: var(--brand-primary); display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="message-square" class="icon-sm"></i> Is this quotation up to the mark?
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">Your feedback helps us improve future quotations.</p>
+                        <div style="display: flex; gap: 12px;">
+                            <button id="btnFeedbackGood" class="dl-btn" style="flex: 1; justify-content: center; background: var(--brand-primary); color: white; border: none;">
+                                <i data-lucide="thumbs-up" class="icon-sm"></i> Good
+                            </button>
+                            <button id="btnFeedbackBad" class="dl-btn" style="flex: 1; justify-content: center;">
+                                <i data-lucide="thumbs-down" class="icon-sm"></i> Needs Improvement
+                            </button>
+                        </div>
+                        <div id="feedbackThanks" style="display:none; color: var(--accent-success); margin-top: 12px; font-weight: 500; font-size: 0.9rem; align-items: center; gap: 6px;">
+                            <i data-lucide="check-circle" class="icon-sm"></i> Thank you! Feedback recorded.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2239,6 +2258,16 @@
                     quotationData = data.quotation_data;
                     document.getElementById('rightPanelEmpty').style.display = 'none';
                     quotResult.style.display = 'block';
+                    
+                    const fbSection = document.getElementById('feedbackSection');
+                    if (fbSection) {
+                        fbSection.style.display = 'block';
+                        const fbThanks = document.getElementById('feedbackThanks');
+                        if (fbThanks) fbThanks.style.display = 'none';
+                        document.getElementById('btnFeedbackGood').disabled = false;
+                        document.getElementById('btnFeedbackBad').disabled = false;
+                    }
+                    
                     // Auto-send quotation email after successful generation
                     sendQuotationEmail(true);
                 } else {
@@ -2331,6 +2360,37 @@
             btn.disabled  = false;
             btn.innerHTML = originalHtml;
             lucide.createIcons();
+        }
+
+        // ─── Feedback ─────────────────────────────────────
+        document.getElementById('btnFeedbackGood').addEventListener('click', () => submitChatFeedback(true));
+        document.getElementById('btnFeedbackBad').addEventListener('click', () => submitChatFeedback(false));
+
+        async function submitChatFeedback(isGood) {
+            document.getElementById('btnFeedbackGood').disabled = true;
+            document.getElementById('btnFeedbackBad').disabled = true;
+            
+            // Reconstruct requirements from history for training
+            const reqsText = history.map(h => h.role.toUpperCase() + ': ' + h.content).join('\n');
+            
+            try {
+                await fetch('/feedback/quotation', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        is_good: isGood,
+                        requirements: reqsText,
+                        quotation_data: quotationData,
+                        template_type: selectedTemplate
+                    })
+                });
+                const fbThanks = document.getElementById('feedbackThanks');
+                if (fbThanks) {
+                    fbThanks.style.display = 'flex';
+                }
+            } catch (e) {
+                console.error("Feedback error", e);
+            }
         }
 
         // ─── Template selector ────────────────────────────

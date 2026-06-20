@@ -112,6 +112,12 @@ function setupEventListeners() {
             if (e.key === 'Enter') handleModalSend();
         });
     }
+
+    // Feedback buttons
+    const btnFeedbackGood = document.getElementById('btnFeedbackGood');
+    const btnFeedbackBad = document.getElementById('btnFeedbackBad');
+    if (btnFeedbackGood) btnFeedbackGood.addEventListener('click', () => submitFeedback(true));
+    if (btnFeedbackBad) btnFeedbackBad.addEventListener('click', () => submitFeedback(false));
 }
 
 // ─── Email Modal Helpers ───────────────────────────────────────────────────────
@@ -349,6 +355,13 @@ function showPreview(data) {
 
 function showDownloadSection() {
     downloadSection.classList.add('show');
+    const fbSection = document.getElementById('feedbackSection');
+    if (fbSection) {
+        fbSection.style.display = 'block';
+        document.getElementById('feedbackThanks').style.display = 'none';
+        document.getElementById('btnFeedbackGood').disabled = false;
+        document.getElementById('btnFeedbackBad').disabled = false;
+    }
 }
 
 async function downloadDocument(format) {
@@ -419,5 +432,27 @@ function showAlert(message, type) {
     setTimeout(() => {
         alertBox.classList.remove('show');
     }, 5000);
+}
+
+async function submitFeedback(isGood) {
+    document.getElementById('btnFeedbackGood').disabled = true;
+    document.getElementById('btnFeedbackBad').disabled = true;
+    
+    try {
+        const response = await fetch('/feedback/quotation', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                is_good: isGood,
+                requirements: requirements,
+                quotation_data: quotationData,
+                template_type: currentTemplate
+            })
+        });
+        const data = await response.json();
+        document.getElementById('feedbackThanks').style.display = 'block';
+    } catch (e) {
+        console.error("Feedback error", e);
+    }
 }
 

@@ -369,3 +369,48 @@ def _iso_to_ts(iso_str: str) -> float:
         return dt.timestamp()
     except Exception:
         return 0.0
+
+# ─── Training Data ────────────────────────────────────────────────────────────
+
+_training_cache = None
+_training_cache_time = 0
+
+def save_training_example(user_key: str, requirements_text: str, quotation_data: dict, template_type: str, source: str = 'admin'):
+    """Save a training example."""
+    global _training_cache
+    try:
+        supabase.table("training_examples").insert({
+            "user_key": user_key,
+            "requirements_text": requirements_text,
+            "quotation_data": quotation_data,
+            "template_type": template_type,
+            "source": source
+        }).execute()
+        _training_cache = None # invalidate cache
+    except Exception as e:
+        print(f"[save_training_example] Error: {e}")
+        traceback.print_exc()
+
+def get_training_examples(limit=10) -> list:
+    """Get recent training examples. Uses a simple 5-min memory cache."""
+    global _training_cache, _training_cache_time
+    import time
+    now = time.time()
+    if _training_cache is not None and (now - _training_cache_time < 300):
+        return _training_cache
+    
+    try:
+        result = (
+            supabase.table("training_examples")
+            .select("requirements_text, quotation_data")
+            .order("created_at", desc=True)
+            .limit(limit)
+            .execute()
+        )
+        _training_cache = result.data or []
+        _training_cache_time = now
+        return _training_cache
+    except Exception as e:
+        print(f"[get_training_examples] Error: {e}")
+        return []
+

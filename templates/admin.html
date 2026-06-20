@@ -412,6 +412,13 @@
                     </div>
                 </div>
             </div>
+            <button class="sb-btn" id="navDirectory" style="margin-bottom: 8px;">
+                <i data-lucide="users" class="icon-sm"></i> User Directory
+            </button>
+            <button class="sb-btn" id="navTrainModel" style="margin-bottom: 8px;">
+                <i data-lucide="brain-circuit" class="icon-sm"></i> Train Model
+            </button>
+            <hr>
             <a href="/logout" class="sb-btn danger" style="text-decoration:none;">
                 <i data-lucide="log-out" class="icon-sm"></i> Logout
             </a>
@@ -453,6 +460,28 @@
             </div>
             <div id="overviewGrid" class="overview-grid" style="display:none"></div>
             <div id="chatContent" style="display:none"></div>
+            
+            <div id="trainModelView" style="display:none; max-width: 800px; margin: 0 auto;">
+                <h3 style="margin-bottom: 16px; color: var(--text-primary);"><i data-lucide="brain-circuit" class="icon-sm" style="color: var(--brand-primary)"></i> Upload Training Data</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 0.9rem;">Submit excellent examples of requirements and corresponding quotations. These examples will be used to instruct the AI generation process via few-shot prompting.</p>
+                
+                <div style="background: var(--bg-card); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                    <label style="display:block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem;">Template Type</label>
+                    <select id="trainTemplateType" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-primary);">
+                        <option value="type1">Type 1 - Detailed Itemized Quotation</option>
+                        <option value="type2">Type 2 - Executive Summary Style</option>
+                    </select>
+
+                    <label style="display:block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem;">Requirements Document (PDF or Word)</label>
+                    <input type="file" id="trainReqsFile" accept=".pdf,.docx,.doc" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-primary);" />
+
+                    <label style="display:block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem;">Quotation Data (JSON format)</label>
+                    <textarea id="trainQuote" rows="12" placeholder='{"project_title": "...", "scope_of_work": [...], ...}' style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-primary); resize: vertical; font-family: monospace; font-size: 0.85rem;"></textarea>
+
+                    <button id="btnSubmitTrain" style="background: var(--brand-primary); color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.95rem;">Save Training Example</button>
+                    <span id="trainStatusMsg" style="margin-left: 16px; font-size: 0.9rem;"></span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -474,6 +503,101 @@
         });
 
         // ─── Load users on page load ──────────────────────────────────────────────────
+        
+        document.getElementById('navDirectory')?.addEventListener('click', () => {
+            document.getElementById('trainModelView').style.display = 'none';
+            document.getElementById('sbLabel').innerHTML = '<i data-lucide="users" class="icon-sm"></i> Directory';
+            document.getElementById('sessionList').style.display = 'none';
+            document.getElementById('userList').style.display = 'block';
+            document.getElementById('overviewGrid').style.display = 'grid';
+            document.getElementById('placeholder').style.display = 'none';
+            document.getElementById('chatContent').style.display = 'none';
+            document.getElementById('mainTitle').textContent = 'Admin Dashboard';
+            document.getElementById('mainSub').textContent = 'Click a user to view their chats';
+            document.getElementById('headerDot').style.display = 'inline-block';
+            lucide.createIcons();
+            loadUsers();
+        });
+
+        document.getElementById('navTrainModel')?.addEventListener('click', () => {
+            document.querySelectorAll('.user-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('placeholder').style.display = 'none';
+            document.getElementById('overviewGrid').style.display = 'none';
+            document.getElementById('chatContent').style.display = 'none';
+            document.getElementById('trainModelView').style.display = 'block';
+            
+            document.getElementById('mainTitle').textContent = 'Train Model';
+            document.getElementById('mainSub').textContent = 'Add gold standard examples';
+            document.getElementById('headerDot').style.display = 'inline-block';
+        });
+
+        document.getElementById('btnSubmitTrain')?.addEventListener('click', async () => {
+            const reqFile = document.getElementById('trainReqsFile').files[0];
+            const quoteText = document.getElementById('trainQuote').value.trim();
+            const ttype = document.getElementById('trainTemplateType').value;
+            const statusEl = document.getElementById('trainStatusMsg');
+            
+            if (!reqFile || !quoteText) {
+                statusEl.textContent = 'Please select a requirements file and provide quotation data.';
+                statusEl.style.color = 'var(--accent-danger)';
+                return;
+            }
+            
+            let quoteObj;
+            try {
+                quoteObj = JSON.parse(quoteText);
+            } catch (e) {
+                statusEl.textContent = 'Invalid JSON in Quotation Data.';
+                statusEl.style.color = 'var(--accent-danger)';
+                return;
+            }
+            
+            statusEl.textContent = 'Uploading and parsing file...';
+            statusEl.style.color = 'var(--text-secondary)';
+            
+            // First, upload file to get requirements text
+            const formData = new FormData();
+            formData.append('file', reqFile);
+            let reqsText = "";
+            try {
+                const upRes = await fetch('/upload', { method: 'POST', body: formData });
+                const upData = await upRes.json();
+                if (!upData.success) {
+                    statusEl.textContent = 'Failed to parse file: ' + upData.error;
+                    statusEl.style.color = 'var(--accent-danger)';
+                    return;
+                }
+                reqsText = upData.requirements;
+            } catch (e) {
+                statusEl.textContent = 'Upload failed.';
+                statusEl.style.color = 'var(--accent-danger)';
+                return;
+            }
+
+            statusEl.textContent = 'Saving training example...';
+            
+            try {
+                const res = await fetch('/admin/training/add', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({requirements: reqsText, quotation_data: quoteObj, template_type: ttype})
+                });
+                const data = await res.json();
+                if (data.success) {
+                    statusEl.textContent = 'Training example saved successfully!';
+                    statusEl.style.color = 'var(--accent-success)';
+                    document.getElementById('trainReqsFile').value = '';
+                    document.getElementById('trainQuote').value = '';
+                } else {
+                    statusEl.textContent = 'Error: ' + data.error;
+                    statusEl.style.color = 'var(--accent-danger)';
+                }
+            } catch (e) {
+                statusEl.textContent = 'Failed to save.';
+                statusEl.style.color = 'var(--accent-danger)';
+            }
+        });
+
         async function loadUsers() {
             const res = await fetch('/admin/users');
             const data = await res.json();

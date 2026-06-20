@@ -132,8 +132,22 @@ Generate an EXECUTIVE SUMMARY STYLE QUOTATION (2-3 pages) with the following str
 Make this polished and executive-focused, spanning 2-3 pages when formatted.
 """
         
-        prompt = f"""You are a professional business proposal writer. Based on the following client requirements, create a comprehensive quotation proposal.
+        from auth_service import get_training_examples
+        examples = get_training_examples(limit=8)
+        
+        few_shot_text = ""
+        if examples:
+            few_shot_text = "\nHere are high-quality examples of Requirements → Excellent Proposals:\n\n"
+            for i, ex in enumerate(examples, 1):
+                # truncate data to avoid blowing up tokens
+                reqs = ex.get('requirements_text', '')[:1000]
+                prop = json.dumps(ex.get('quotation_data', {}), indent=2)[:2000]
+                few_shot_text += f"EXAMPLE {i}:\nRequirements: {reqs}\nProposal: {prop}\n\n"
+            few_shot_text += "Now create a new professional quotation following the same quality, detail level, and style as the examples above for the following requirements:\n"
+        
+        prompt = f"""You are an expert quotation writer for MJ Services.
 
+{few_shot_text}
 **Client Requirements:**
 {requirements}
 

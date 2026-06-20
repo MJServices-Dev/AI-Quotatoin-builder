@@ -618,6 +618,49 @@ def admin_delete_chat(user_key, session_id):
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
+@app.route('/admin/training/add', methods=['POST'])
+@admin_required
+def admin_training_add():
+    """Admin adds a gold standard training example."""
+    try:
+        data = request.get_json()
+        reqs = data.get('requirements')
+        quote = data.get('quotation_data')
+        ttype = data.get('template_type', 'type1')
+        
+        if not reqs or not quote:
+            return jsonify({'success': False, 'error': 'Requirements and quotation data are required'})
+            
+        from auth_service import save_training_example
+        save_training_example('admin', reqs, quote, ttype, 'admin')
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/feedback/quotation', methods=['POST'])
+@login_required
+def feedback_quotation():
+    """Save user feedback as training example if it is good."""
+    try:
+        data = request.get_json()
+        is_good = data.get('is_good')
+        if not is_good:
+            return jsonify({'success': True, 'message': 'Feedback received but not saved as training data'})
+            
+        reqs = data.get('requirements')
+        quote = data.get('quotation_data')
+        ttype = data.get('template_type', 'type1')
+        user_key = session.get('user', {}).get('key', 'unknown')
+        
+        if not reqs or not quote:
+            return jsonify({'success': False, 'error': 'Missing data'})
+            
+        from auth_service import save_training_example
+        save_training_example(user_key, reqs, quote, ttype, 'user_feedback')
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # ─── ENTRY POINT ──────────────────────────────────────────────────────────────
